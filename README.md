@@ -68,8 +68,8 @@ Once a server (or a fleet of server instances) are reporting schemas, Apollo Gra
 If server instances are reporting multiple different schemas simultaneously (e.g. during a deployment), Apollo Graph Manager will determine promotion rules using the following algorithm:
 
 1. If there is no schema active for the graph variant, choose the most recently reported schema
-2. If there is a schema active, and that schema has been reported in the last 60 seconds (not configurable), do nothing
-3. If there is a schema active, and that schema has not been reported in the last 60 seconds, choose the most recently reported schema
+2. If there is a schema active, and that schema has been reported in the last 120 seconds (not configurable), do nothing
+3. If there is a schema active, and that schema has not been reported in the last 120 seconds, choose the most recently reported schema
 4. Otherwise, do nothing
 
 ## Non-Apollo Server runtimes
