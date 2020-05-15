@@ -1,6 +1,6 @@
 # Preview: Apollo Schema Reporting
 
-Welcome to our pre-release documentation for Apollo Schema Reporting, **a protocol and implementation for GraphQL servers to automatically report their schema to the Apollo registry**. 
+Welcome to our pre-release documentation for Apollo Schema Reporting, **a protocol and implementation for GraphQL servers to automatically report their schema to the Apollo registry**.
 
 This repository is meant to provide early access users with information about this new project and instructions to configure schema-reporting, along with a central place to provide feedback to the schema reporting team.
 
@@ -18,7 +18,7 @@ If you're reading this, you've discovered, either through communication with our
 
 This documentation will cover a few different components of what we're working on in more detail, including:
 
-1. The protocol for schema reporting
+1. The [protocol](./schema-reporting-protocol) for schema reporting
 2. The Apollo Server reference implementation of schema reporting
 3. Automatic schema promotion to the registry
 
@@ -69,11 +69,11 @@ However, there is support for changing some defaults of schema-reporting and sup
 
 ```json
 engine: {
-	schemaReporting: { 
-		useTypeDefs: true 
+	schemaReporting: {
+		useTypeDefs: true
 	}
 }
-``` 
+```
 
 ## Automatic Promotion (in Apollo Graph Manager)
 
