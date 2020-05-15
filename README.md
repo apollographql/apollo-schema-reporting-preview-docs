@@ -1,6 +1,6 @@
 # Preview: Apollo Schema Reporting
 
-Welcome to our __preview documentation for Apollo Schema Reporting, a protocol and implementation for GraphQL servers to automatically report their schema to the Apollo schema registry__ .
+Welcome to our __preview documentation for Apollo Schema Reporting, a protocol and implementation for GraphQL servers to automatically report their schema to the Apollo schema registry__.
 
 At Apollo, we want to make it easy to accurately track the evolution of your GraphQL schema over time. That's why we are previewing functionality to automatically report a schema definition from your running GraphQL server, which will be registered in your graph's version history in Apollo Graph Manager.
 
@@ -74,7 +74,7 @@ By default, the schema-reporting agent will use the `GraphQLSchema` that is defi
 
 However, there is support for changing some defaults of schema-reporting and supplying optional arguments. For a full list of optional arguments that the protocol accepts, see [protocol documentation](./schema-reporting-protocol.md). **Specifically: to report the `typeDefs` directly as a document, rather than the internally interpreted `GraphQLSchema`, supply the following config in your Apollo Server constructor:**
 
-```json
+```js
 engine: {
 	schemaReporting: {
 		experimental_overrideReportedSchema: typeDefs,
