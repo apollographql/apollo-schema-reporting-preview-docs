@@ -61,7 +61,7 @@ type ServiceMutation {
     * **`bootId`**: a randomly generated UUID, immutable for the lifetime of the server runtime.
     * **`executableSchemaId`**
         * This is an identifier decided by the edge server. This should be the sha256, represented in hex, of the schema document.
-    * `**graphVariant**`**: **the graph variant,** **defaults to `“current”`.
+    * **`graphVariant`**: the graph variant, defaults to `"current"`.
 * _Optional, recommended:_
     These values will eventually be available on Graph Manager and will allow users to have a better understanding of what was reported, when, and from where.
     * **`serverId`**: _If available_, an identifier for the instance, such that when restarting this instance it will have the same **`serverId`**, with a different **`bootId`**. In a kubernetes cluster, this might be the **pod** **name**, where the **container** can restart.
