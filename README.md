@@ -72,7 +72,7 @@ However, there is support for changing some defaults of schema-reporting and sup
 ```json
 engine: {
 	schemaReporting: {
-		useTypeDefs: true
+		experimental_overrideReportedSchema: typeDefs,
 	}
 }
 ```
