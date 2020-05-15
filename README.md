@@ -1,16 +1,16 @@
 # Preview: Apollo Schema Reporting
 
-Welcome to our **preview documentation for Apollo Schema Reporting, a protocol and implementation for GraphQL servers to automatically report their schema to the Apollo schema registry**.
+Welcome to our __preview documentation for Apollo Schema Reporting, a protocol and implementation for GraphQL servers to automatically report their schema to the Apollo schema registry__ .
 
-This repository is meant to provide early access users with information about this new project and instructions to configure schema-reporting, along with a central place to provide feedback to the schema reporting team.
+This repository is meant to provide early access users with information about this new project and instructions to configure schema-reporting, along with a central place to provide feedback to the schema reporting team (open an issue!).
 
 ## Before you start: IMPORTANT DISCLAIMER
 
-The documentation here is currently only a preview of pre-release software. You may use it at will, but this evaluation product is not yet fully supported or considered generally available. While we will try to avoid breaking changes once a feature is in use, until the features discussed herein are taken out of preview we could make breaking changes. Please be aware of the heightened risk of using preview software.
+_The documentation here is currently only a preview of pre-release software. You may use it at will, but this evaluation product is not yet fully supported or considered generally available. While we will try to avoid breaking changes once a feature is in use, until the features discussed herein are taken out of preview we could make breaking changes. Please be aware of the heightened risk of using preview software._
 
-Use of anything described in these preview docs (current as of April 2020) is done at your own risk and is governed by [The Apollo Terms of Service](https://www.apollographql.com/Apollo-Terms-of-Service.pdf).
+_Use of anything described in these preview docs (current as of May 2020) is done at your own risk and is governed by [The Apollo Terms of Service](https://www.apollographql.com/Apollo-Terms-of-Service.pdf)._
 
-PREVIEWS ARE PROVIDED "AS-IS," "WITH ALL FAULTS," AND "AS AVAILABLE," AND ARE EXCLUDED FROM ANY SERVICE LEVEL AGREEMENTS AND LIMITED WARRANTY. Previews may not be covered by customer support. Previews may be subject to reduced or different security, compliance and privacy commitments, as further explained in the Terms of Service, Privacy Policy and any additional notices provided with the Preview. We may change or discontinue Previews at any time without notice. We also may choose not to release a Preview into "General Availability."
+_PREVIEWS ARE PROVIDED "AS-IS," "WITH ALL FAULTS," AND "AS AVAILABLE," AND ARE EXCLUDED FROM ANY SERVICE LEVEL AGREEMENTS AND LIMITED WARRANTY. Previews may not be covered by customer support. Previews may be subject to reduced or different security, compliance and privacy commitments, as further explained in the Terms of Service, Privacy Policy and any additional notices provided with the Preview. We may change or discontinue Previews at any time without notice. We also may choose not to release a Preview into "General Availability."_
 
 ## Overview
 
