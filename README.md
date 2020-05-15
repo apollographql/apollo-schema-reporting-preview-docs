@@ -1,6 +1,6 @@
 # Preview: Apollo Schema Reporting
 
-Welcome to our pre-release documentation for Apollo Schema Reporting, **a protocol and implementation for GraphQL servers to automatically report their schema to the Apollo schema registry**.
+Welcome to our **preview documentation for Apollo Schema Reporting, a protocol and implementation for GraphQL servers to automatically report their schema to the Apollo schema registry**.
 
 This repository is meant to provide early access users with information about this new project and instructions to configure schema-reporting, along with a central place to provide feedback to the schema reporting team.
 
