@@ -18,7 +18,7 @@ If you're reading this, you've discovered, either through communication with our
 
 This documentation will cover a few different components of what we're working on in more detail, including:
 
-1. The [protocol](./schema-reporting-protocol) for schema reporting
+1. The [protocol](./schema-reporting-protocol.md) for schema reporting
 2. The Apollo Server reference implementation of schema reporting
 3. Automatic schema promotion to the registry
 
