@@ -47,7 +47,7 @@ or via constructor options passed to Apollo Server
 ```js
 new ApolloServer({
   engine: {
-    experimental__schemaReporting: true,
+    experimental_schemaReporting: true,
   },
   ...
 });
