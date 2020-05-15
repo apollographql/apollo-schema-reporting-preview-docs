@@ -6,8 +6,8 @@ The goal of this document is to provide the technical details of implementing sc
 
 # Glossary
 
-* **Schema**: A GraphQL document (sometimes referred to as SDL)
-* **Edge Server**: A GraphQL server that contains an Apollo API key
+*  **Schema**: A GraphQL document (sometimes referred to as SDL)
+*  **Edge Server**: A GraphQL server that contains an Apollo API key
 * **Executable schema**: The schema that the edge server is exposing to the client, which is used to generate the introspection result. This schema may contain comments and directives or may not and should be represented as a GraphQL document.
 * **Executable schema identifier**: The hex representation of the sha256 of the executable schema document
 * **Apollo**: The Apollo cloud schema registry
