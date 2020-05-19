@@ -4,7 +4,7 @@
 
 At Apollo, we want to help you track the evolution of your GraphQL schema over time. That's why we are previewing functionality to automatically report a schema definition from your running GraphQL server, which will be registered in your graph's version history in Apollo Graph Manager.
 
-This repository is meant to provide early access users with information about this new project and instructions to configure schema-reporting, along with a central place to provide feedback to the schema reporting team (open an issue!).
+This repository provides early-access users with information about this new project and instructions to configure schema reporting, along with a central place to [provide feedback to the schema reporting team](https://github.com/apollographql/apollo-schema-reporting-preview-docs/issues/new).
 
 ## DISCLAIMER
 
