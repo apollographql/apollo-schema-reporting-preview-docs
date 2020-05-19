@@ -60,22 +60,24 @@ type ServiceMutation {
 ### Required fields
 
 | Name  | Type | Description  |
-|---|---|
+|---|---|---|
 | `bootId` | `String!` | A randomly generated UUID that's unique for each instance of your edge server. Set this value on server startup (a given value should not persist across restarts). |
 | `executableSchemaId` | `String!` | A unique identifier for the edge server's schema. Should be the hex representation of the schema document's SHA-256 hash. |
 
 ### Recommended fields
 
 | Name  | Type | Description  |
+|---|---|---|
 | `graphVariant` | `String!` | The name of the graph variant to register the schema to. The default value is `current`. |
-| `serverId` | A randomly generated UUID that's unique for each instance of your edge server. Unlike `bootId`, this value _should_ persist across an instance's restarts. In a Kubernetes cluster, this might be the **pod name**, whereas the **container** can restart. |
-| `userVersion` | `String` | An arbitrary string you can set to distinguish data sent by different versions of your edge server. For example, this can be the SHA of the Git commit for your deployed server code. We plan to make this value visible in Graph Manager.
+| `serverId` | `String` | A randomly generated UUID that's unique for each instance of your edge server. Unlike `bootId`, this value _should_ persist across an instance's restarts. In a Kubernetes cluster, this might be the **pod name**, whereas the **container** can restart. |
+| `userVersion` | `String` | An arbitrary string you can set to distinguish data sent by different versions of your edge server. For example, this can be the SHA of the Git commit for your deployed server code. We plan to make this value visible in Graph Manager. |
 
 ### Appreciated fields 🙂
 
 By providing these values in your requests, you'll help Apollo improve its service. For example, they'll help us identify whether a certain environment, platform, or version is causing a particular issue.
 
 | Name  | Type | Description  |
+|---|---|---|
 | `runtimeVersion` | `String` | The runtime that your edge server is running, such as `node 12.03`.
 | `libraryVersion` | `String` | The name and version of the server and/or reporting agent your edge server is using, such as `apollo-server-2.8` or `graphql-java-3.1`. | 
 | `platform` | `String` | The infrastructure environment that your edge server is running in (`localhost`, `kubernetes/deployment`, `aws lambda`, `google cloud run`, `google cloud function`, `AWS ECS`, etc.) |
