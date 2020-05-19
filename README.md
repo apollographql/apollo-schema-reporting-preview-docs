@@ -1,30 +1,32 @@
-# Preview: Apollo Schema Reporting
+# [Developer Preview] Apollo Schema Reporting
 
-Welcome to our __preview documentation for Apollo Schema Reporting, a protocol and implementation for GraphQL servers to automatically report their schema to the Apollo schema registry__.
+**Apollo Schema Reporting** is a protocol (and an implementation of that protocol) that enables GraphQL servers to automatically register their schema with Apollo Graph Manager.
 
-At Apollo, we want to make it easy to accurately track the evolution of your GraphQL schema over time. That's why we are previewing functionality to automatically report a schema definition from your running GraphQL server, which will be registered in your graph's version history in Apollo Graph Manager.
+At Apollo, we want to help you track the evolution of your GraphQL schema over time. That's why we are previewing functionality to automatically report a schema definition from your running GraphQL server, which will be registered in your graph's version history in Apollo Graph Manager.
 
 This repository is meant to provide early access users with information about this new project and instructions to configure schema-reporting, along with a central place to provide feedback to the schema reporting team (open an issue!).
 
-## Before you start: IMPORTANT DISCLAIMER
+## DISCLAIMER
 
-_The documentation here is currently only a preview of pre-release software. You may use it at will, but this evaluation product is not yet fully supported or considered generally available. While we will try to avoid breaking changes once a feature is in use, until the features discussed herein are taken out of preview we could make breaking changes. Please be aware of the heightened risk of using preview software._
-
-_Use of anything described in these preview docs (current as of May 2020) is done at your own risk and is governed by [The Apollo Terms of Service](https://www.apollographql.com/Apollo-Terms-of-Service.pdf)._
+**Apollo Schema Reporting is in active development.** It is not yet considered generally available or officially supported by Apollo. During this developer preview, the protocol and its implementation might change without notice. You are free to use both at your own risk, as described in the [Apollo Terms of Service](https://www.apollographql.com/Apollo-Terms-of-Service.pdf):
 
 _PREVIEWS ARE PROVIDED "AS-IS," "WITH ALL FAULTS," AND "AS AVAILABLE," AND ARE EXCLUDED FROM ANY SERVICE LEVEL AGREEMENTS AND LIMITED WARRANTY. Previews may not be covered by customer support. Previews may be subject to reduced or different security, compliance and privacy commitments, as further explained in the Terms of Service, Privacy Policy and any additional notices provided with the Preview. We may change or discontinue Previews at any time without notice. We also may choose not to release a Preview into "General Availability."_
 
-## How to get set up with Apollo Server
+## Setup for Apollo Server
 
-In order to configure Apollo Server **(v2.14+)** to report schemas, you will need to provide it a `service` API token through an environment variable. (For those of you who have already configured metrics reporting from Apollo Server, you have already passed this token to your server and can skip this step.) This token can be found in the graph settings page of [Apollo Graph Manager](https://engine.apollographql.com) for your graph. To pass this token to Apollo Server, simply set the `APOLLO_KEY` environment variable.  See [the docs](https://www.apollographql.com/docs/graph-manager/setup-analytics/) for more information.
+### Obtain and set your graph API key
 
-While this functionality is in preview, it will be opt-in by default. To opt in, set
+To configure schema reporting for Apollo Server (supported in v2.14+ and later), you first provide Apollo Server a **graph API key** via the `APOLLO_KEY` environment variable. See [Pushing traces from Apollo Server](https://www.apollographql.com/docs/graph-manager/setup-analytics/#pushing-traces-from-apollo-server) to learn how to obtain this key. (If you've already configured metrics reporting, you can skip this step.)
+
+### Opt in to schema reporting
+
+While schema reporting is in developer preview, its functionality is opt-in. To opt in, set the following environment variable in your server's environment:
 
 ```sh
 APOLLO_SCHEMA_REPORTING=true
 ```
 
-or, alternatively, pass constructor options to Apollo Server, like so:
+Alternatively, pass the `experimental_schemaReporting` option to the `ApolloServer` constructor:
 
 ```js
 new ApolloServer({
@@ -35,44 +37,57 @@ new ApolloServer({
 });
 ```
 
-This is all you need to set up your Apollo Server instance to report its schema to Apollo Graph Manager!
+That's it! Now every time your server starts up, it automatically reports its schema to Graph Manager.
 
-Additionally, you can optionally specify a variant via the `APOLLO_GRAPH_VARIANT` environment variable.
+### Reporting a schema for a particular variant
+
+Your server can optionally report its schema to a particular [variant of your graph](https://www.apollographql.com/docs/graph-manager/schema-registry/#managing-environments-with-variants). To set this up, set the `APOLLO_GRAPH_VARIANT` environment variable in your server's environment:
 
 ```sh
-APOLLO_GRAPH_VARIANT=production
+APOLLO_GRAPH_VARIANT=staging
 ```
 
-If you do not specify a variant, the default variant `current` will be used for reporting.
+If you don't specify a variant, Apollo Server reports its schema to the default variant (named `current`).
 
-## Non-Apollo Server runtimes
+## Setup for other GraphQL servers
 
-If you are interested in support for schema reporting to Apollo Graph Manager from a non-Apollo server runtime, we would love to hear from you and help provide support in implementing the protocol & integrating with our schema-reporting functionality. Please open an issue on this repository to indicate your interest, including which server runtime you would like to see supported. To get started on your own with another server runtime, get started by reading the [schema reporting protocol](./schema-reporting-protocol.md).
+By providing a graph API key and a schema document to Graph Manager's schema reporting endpoint, any GraphQL server can report its schema to Graph Manager. If you want to add schema reporting support to a GraphQL server besides Apollo Server, we would love to hear from you and provide assistance in implementing the protocol.
 
-## Learn more
+To let us know, [open an issue on this repository](https://github.com/apollographql/apollo-schema-reporting-preview-docs/issues/new). Please include which server runtime you're interested in adding support to.
 
-To get started with automatic schema reporting, all you need is above. However, to learn more about the mechanics of schema-reporting and how automatic promotion determines which schema is "active", keep reading...
+You can also get started on your own by:
 
-### Supporting materials
+* Reading the [schema reporting protocol](./schema-reporting-protocol.md)
+* Consulting the [Apollo Server reference implementation](https://github.com/apollographql/apollo-server/pull/4084)
 
-This documentation will cover the high-level concepts of schema reporting and automatic promotion, along with inter-operability between automatic schema reporting and the Apollo CLI's `service:push`. For other resources, please see:
+## Advanced topics
 
-1. The [protocol](./schema-reporting-protocol.md) for schema reporting
-2. The [Apollo Server reference implementation](https://github.com/apollographql/apollo-server/pull/4084) of schema reporting
+These sections describe the behavior of schema reporting in greater detail.
 
-### Schema reporting
+### The schema reporting endpoint
 
-Apollo schema reporting is a mechanism by which running servers can report the shape of the schema they're serving to Apollo Graph Manager, in the form of a [GraphQL document (SDL)](https://www.apollographql.com/docs/apollo-server/schema/schema/#the-schema-definition-language). A running GraphQL server needs only have this document and an identifier for this document in order to report its schema.
+A server that implements the [schema reporting protocol](./schema-reporting-protocol.md) communicates with a GraphQL API hosted at `https://engine-graphql.apollographql.com/api/graphql`. This endpoint requires a [graph API key](https://www.apollographql.com/docs/graph-manager/setup-analytics/#pushing-traces-from-apollo-server) as authentication. 
 
-The [schema-reporting protocol](./schema-reporting-protocol.md) is a GraphQL API hosted at https://engine-graphql.apollographql.com/api/graphql, which requires a `service` token as authentication. With this `service` token, a schema document, and an implementation of schema-reporting, any GraphQL server can report its schema at runtime, which will update the registered schema for a given `variant` (e.g. `staging` or `adam-dev`).
+Whenever your server (or a fleet of server instances) reports its schema, Apollo Graph Manager registers it as the latest schema for a specified variant of your graph. If different server instances report different schemas simultaneously, Graph Manager uses its **automatic promotion algorithm** to choose which schema to register:
 
-Once a server (or a fleet of server instances) are reporting schemas, Apollo Graph Manager will update the schema registered to a graph's variant to the most recently reported schema from that fleet. When multiple schemas are reported simultaneously, Apollo Graph Manager will use its "automatic promotion" algorithm to choose which schema should be registered.
+1. If the specified variant does not currently have an active schema, choose the most recently reported schema.
+2. If the specified variant _does_ have an active schema and that exact schema has been reported within the last 120 seconds (not configurable), do nothing.
+3. If the specified variant has an active schema and that exact schema has _not_ been reported in the last 120 seconds, choose the most recently reported schema.
+4. In all other cases, do nothing.
 
-#### Advanced usage
+### Schema reporting and the Apollo CLI
 
-By default, the schema-reporting agent will use the `GraphQLSchema` that is defined as a property of your Apollo Server instance (which is used to answer introspection requests), and will report it as a GraphQL document (commonly called SDL) using the schema-reporting protocol. The default usage should be sufficient to ensure that the schema in the registry is up-to-date with the schema your server exposes.
+The [Apollo CLI](https://www.apollographql.com/docs/devtools/cli/) provides a different mechanism for [registering a schema](https://www.apollographql.com/docs/graph-manager/schema-registry/#registering-a-schema-manually) to be active for a variant of a graph. If you currently use the `apollo service:push` command to register your schema, you can discontinue using the command entirely in favor of enabling schema reporting.
 
-However, there is support for changing some defaults of schema-reporting and supplying optional arguments. For a full list of optional arguments that the protocol accepts, see [protocol documentation](./schema-reporting-protocol.md). **Specifically: to report the `typeDefs` directly as a document, rather than the internally interpreted `GraphQLSchema`, supply the following config in your Apollo Server constructor:**
+You _can_ use both the Apollo CLI and schema reporting together, but doing so can cause you to register "no-op" changes, in which the tools register schemas that are _semantically_ identical but _cosmetically_ different. For example, schema reporting preserves a schema's comments and directives, but the `apollo service:push` command does not.
+
+### Customizing behavior in Apollo Server
+
+By default, the schema reporting agent in Apollo Server uses the `GraphQLSchema` that's defined as a property of your `ApolloServer` instance (which is used to answer introspection requests). The agent reports the schema as a GraphQL document (commonly called SDL) using the schema reporting protocol. This default behavior should serve the large majority of use cases.
+
+If necessary, however, you can modify certain schema reporting defaults and provide optional arguments. For a full list of optional arguments that the protocol accepts, see the [protocol documentation](./schema-reporting-protocol.md).
+
+As one example, to report your server's `typeDefs` directly as a document instead of using the internally interpreted `GraphQLSchema`, provide the following option to the `ApolloServer` constructor:
 
 ```js
 engine: {
@@ -81,20 +96,3 @@ engine: {
 	}
 }
 ```
-
-### Automatic Promotion (in Apollo Graph Manager)
-
-Once a server (or a fleet of server instances) are reporting schemas, Apollo Graph Manager will update the **active** schema for a graph's variant to the most recently reported schema from that fleet.
-
-If server instances are reporting multiple different schemas simultaneously (e.g. during a deployment), Apollo Graph Manager will determine promotion rules using the following algorithm:
-
-1. If there is no schema active for the graph variant, choose the most recently reported schema
-2. If there is a schema active, and that schema has been reported in the last 120 seconds (not configurable), do nothing
-3. If there is a schema active, and that schema has not been reported in the last 120 seconds, choose the most recently reported schema
-4. Otherwise, do nothing
-
-### How schema-reporting works with the Apollo CLI
-
-The [Apollo CLI](https://www.apollographql.com/docs/devtools/cli/) likewise provides a mechanism for users to publish a schema to be active for a variant of a graph. Users that have integrated with the Apollo registry already have done so by using this CLI command (`apollo service:push`). Reporting schemas from your running server is meant to be a wholesale replacement for the existing CLI functionality, and if you are using schema-reporting, you should not need to run `apollo service:push` at all.
-
-It is also possible to use both the CLI and server-led schema-reporting in parallel, but doing so may lead to "no-op" publishes where the precise version of the schema that is registered via the CLI is different from the version of the schema that is registered via schema-reporting in a cosmetic (i.e. non-semantic) way. For instance, comments and directives can be preserved via schema-reporting, but are lost when using the CLI, which explicitly uses the introspection response.
