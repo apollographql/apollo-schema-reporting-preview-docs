@@ -92,7 +92,7 @@ As one example, to report your server's `typeDefs` directly as a document instea
 ```js
 engine: {
 	schemaReporting: {
-		experimental_overrideReportedSchema: typeDefs,
+		experimental_overrideReportedSchema: typeDefs.loc && typeDefs.loc.source.body,
 	}
 }
 ```
