@@ -68,9 +68,9 @@ type ServiceMutation {
     * `**userVersion**`: an arbitrary string the user can set, so that they could distinguish data on the server by this string. For example this can be the git sha of the repository of the user. We plan to make this visible on Graph Manager.
 * _Optional, for Apollo’s use:_
     These values will significantly help Apollo improve its service, for example, by enabling us to identify if certain environments/platforms/versions suffer from certain issues.
-    * **`runtimeVersion`:** The runtime in which the edge server is running, e.g. `node 12.03`
-    * **`libraryVersion`:** The library of the running server & reporting agent, e.g. `apollo-server-2.8` , `graphql-java-3.1`
-    * **`platform`:** The infra environment in which this server is running, e.g. `localhost`, `kubernetes/deployment`, `aws lambda`, `google cloud run`, `google cloud function`, `AWS ECS`, etc.
+    * **`runtimeVersion`**: The runtime in which the edge server is running, e.g. `node 12.03`
+    * **`libraryVersion`**: The library of the running server & reporting agent, e.g. `apollo-server-2.8` , `graphql-java-3.1`
+    * **`platform`**: The infra environment in which this server is running, e.g. `localhost`, `kubernetes/deployment`, `aws lambda`, `google cloud run`, `google cloud function`, `AWS ECS`, etc.
 
 ## Edge server side normalization
 
