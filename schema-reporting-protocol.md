@@ -1,24 +1,31 @@
-# Automatic Schema Reporting Protocol
+# Apollo Schema Reporting Protocol
 
-# Intro
+This document specifies the protocol that any GraphQL server can implement to register its schema with [Apollo Graph Manager](https://www.apollographql.com/docs/graph-manager/).
 
-The goal of this document is to provide the technical details of implementing schema reporting to the Apollo schema registry. Any GraphQL server can write a reporting client to this protocol to enable this functionality. For the purpose of this document, these servers will be referred to as Edge Servers. For a reference reporting client, please see [Apollo Server](https://github.com/apollographql/apollo-server/pull/4084/files).
+A reference implementation of this protocol is included in [Apollo Server](https://github.com/apollographql/apollo-server/pull/4084/files).
 
-# Glossary
+## Protocol sequence
 
-*  **Schema**: A GraphQL document (sometimes referred to as SDL)
-*  **Edge Server**: A GraphQL server that contains an Apollo API key
-* **Executable schema**: The schema that the edge server is exposing to the client, which is used to generate the introspection result. This schema may contain comments and directives or may not and should be represented as a GraphQL document.
-* **Executable schema identifier**: The hex representation of the sha256 of the executable schema document
-* **Apollo**: The Apollo cloud schema registry
-
-# The Automatic Schema Reporting Protocol
+The following diagram illustrates the communication sequence for a GraphQL server (hereafter referred to as the **edge server**) reporting its schema to Apollo Graph Manager (**Apollo**):
 
 ![Schema Reporting Protocol](./schema-reporting-protocol.png "request / response between an edge server and the Apollo schema registry")
 
-## Spec
+1. The edge server calls `reportServerInfo`, providing an `EdgeServerInfo` object with the server's details as input.
+    * The edge server **does not** include an `executableSchema` string in this request.
+    * The edge server **does** include an `executableSchemaId` in the `EdgeServerInfo` input. This is the SHA-256 hash of the edge server's schema, represented as a hexadecimal string. 
+    * If this or any other `reportServerInfo` request fails with a non-2xx response from Apollo, the edge server should retry after 20 seconds.
+2. Apollo responds with a `ReportServerInfoResponse`. This response tells the edge server: 
+    * How many seconds to wait before sending the next `reportServerInfo` request
+    * Whether the next `reportServerInfo` request should include the `executableSchema` that corresponds to the `executableSchemaId` provided in the previous request.
+3. After waiting the specified number of seconds, the edge server calls `reportServerInfo` again. This request includes an `executableSchema` string if and only if `withExecutableSchema` was `true` in Apollo's most recent `ReportServerInfoResponse`.
+4. Go to step 2.
 
-```
+## Type definitions
+
+The schema reporting protocol uses the following GraphQL types, referred to in [Protocol sequence](#protocol-sequence) above:
+
+```graphql
+# This type's fields are documented below.
 input EdgeServerInfo {
   bootId: String!
   executableSchemaId: String!
@@ -46,45 +53,48 @@ type ServiceMutation {
     info: EdgeServerInfo!
   ): ReportServerInfoResponse
 }
-
 ```
 
-1. An Edge server calls `reportServerInfo` with the `EdgeServerInfo` input and without a schema.
-    1. In case this request fails (non 2xx response), the Edge server should try again after a 20s delay.
-2. The server replies with a `ReportServerInfoResponse`. This response tells the Edge server how long to wait before sending the next report and whether to include the schema that corresponds to the `executableSchemaId` sent in the request.
-3. The Edge server calls `reportServerInfo` again after `response.inSeconds` seconds, and includes a schema if `response.withExecutableSchema` is `true`.
-4. GO TO (2)
+## `EdgeServerInfo` fields
 
-## EdgeServerInfo fields
+### Required fields
 
-* _Required:_
-    * **`bootId`**: a randomly generated UUID, immutable for the lifetime of the server runtime.
-    * **`executableSchemaId`**
-        * This is an identifier decided by the edge server. This should be the sha256, represented in hex, of the schema document.
-    * **`graphVariant`**: the graph variant, defaults to `"current"`.
-* _Optional, recommended:_
-    These values will eventually be available on Graph Manager and will allow users to have a better understanding of what was reported, when, and from where.
-    * **`serverId`**: _If available_, an identifier for the instance, such that when restarting this instance it will have the same **`serverId`**, with a different **`bootId`**. In a kubernetes cluster, this might be the **pod** **name**, where the **container** can restart.
-    * `**userVersion**`: an arbitrary string the user can set, so that they could distinguish data on the server by this string. For example this can be the git sha of the repository of the user. We plan to make this visible on Graph Manager.
-* _Optional, for Apollo’s use:_
-    These values will significantly help Apollo improve its service, for example, by enabling us to identify if certain environments/platforms/versions suffer from certain issues.
-    * **`runtimeVersion`**: The runtime in which the edge server is running, e.g. `node 12.03`
-    * **`libraryVersion`**: The library of the running server & reporting agent, e.g. `apollo-server-2.8` , `graphql-java-3.1`
-    * **`platform`**: The infra environment in which this server is running, e.g. `localhost`, `kubernetes/deployment`, `aws lambda`, `google cloud run`, `google cloud function`, `AWS ECS`, etc.
+| Name  | Type | Description  |
+|---|---|---|
+| `bootId` | `String!` | A randomly generated UUID that's unique for each instance of your edge server. Set this value on server startup (a given value should not persist across restarts). |
+| `executableSchemaId` | `String!` | A unique identifier for the edge server's schema. Should be the hex representation of the schema document's SHA-256 hash. |
 
-## Edge server side normalization
+### Recommended fields
 
-On the edge server, we’ll expect reporting client to take these steps to ensure a stable schema document:
+| Name  | Type | Description  |
+|---|---|---|
+| `graphVariant` | `String!` | The name of the graph variant to register the schema to. The default value is `current`. |
+| `serverId` | `String` | A randomly generated ID that's unique for each instance of your edge server. Unlike `bootId`, this value _should_ persist across an instance's restarts. In a Kubernetes cluster, this might be the **pod name**, whereas the **container** can restart. |
+| `userVersion` | `String` | An arbitrary string you can set to distinguish data sent by different versions of your edge server. For example, this can be the SHA of the Git commit for your deployed server code. We plan to make this value visible in Graph Manager. |
 
-1. stable sort ordering of type definitions
-2. stable sort ordering of fields in types
-3. stable sort ordering of arguments
-4. remove redundant whitespace
-5. remove comments (not *descriptions*)
+### Appreciated fields 🙂
 
-Any runtime dependencies of the schema document may result in poor user experience in tracking your schema changes and could result in throttling of service availability.
+By providing these values in your requests, you'll help Apollo improve its service. For example, they'll help us identify whether a certain environment, platform, or version is causing a particular issue.
 
-### Pseudo Code example
+| Name  | Type | Description  |
+|---|---|---|
+| `runtimeVersion` | `String` | The runtime that your edge server is running, such as `node 12.03`.
+| `libraryVersion` | `String` | The name and version of the server and/or reporting agent your edge server is using, such as `apollo-server-2.8` or `graphql-java-3.1`. | 
+| `platform` | `String` | The infrastructure environment that your edge server is running in (`localhost`, `kubernetes/deployment`, `aws lambda`, `google cloud run`, `google cloud function`, `AWS ECS`, etc.) |
+
+## Schema normalization
+
+Two semantically identical schemas can look different to Graph Manager, for example if you rearrange the order of an object type's fields. To avoid this, all edge servers should **normalize** their schema before sending it to Graph Manager.
+
+To normalize your schema, do all of the following:
+
+* Apply stable sorting (such as alphabetical) to the order of all type, field, and argument definitions.
+* Remove all redundant whitespace.
+* Remove all comments (but not docstrings).
+
+Runtime dependencies on your schema document might result in poor user experience in tracking your schema changes, or even throttling of service availability.
+
+### Pseudocode example
 
 ```
 val info = EdgeServerInfo(..)
