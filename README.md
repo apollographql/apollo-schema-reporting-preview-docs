@@ -1,3 +1,9 @@
+# Archival
+This repo was archived by the Apollo Security team on 2023-05-26
+
+Please reach out at security@apollographql.com with questions.
+
+
 # [Developer Preview] Apollo Schema Reporting
 
 **Apollo Schema Reporting** is a protocol (and an implementation of that protocol) that enables GraphQL servers to automatically register their schema with Apollo Graph Manager.
